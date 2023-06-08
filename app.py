@@ -2,6 +2,7 @@ import streamlit as st
 import openai
 
 # https://docs.streamlit.io/library/api-reference
+# streamlit run app.py
 
 openai.api_key = st.secrets["api_key"]
 
