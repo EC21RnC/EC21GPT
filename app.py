@@ -7,6 +7,7 @@ import os
 
 # openai.api_key = st.secrets["api_key"]
 # os.environ["api_key"] == st.secrets["api_key"]
+openai.organization = "org-cWYPb9h1vIjpstBy0y6td4Sj"
 openai.api_key = os.environ.get("api_key")
 # os.environ[]
 
@@ -39,7 +40,7 @@ st.title("EC21R&C SummaryGPT-v4")
 
 with st.form("form"):
     user_input = st.text_area("Prompt")
-    model = st.selectbox("GPT Model", ["파인튜닝_curie_1837", "기본모델_GPT-4", "파인튜닝_curie_513"])
+    model = st.selectbox("GPT Model", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
     temperature = st.selectbox("temperature", ["0.5", "0", "0.3", "0.7", "1"])
     submit = st.form_submit_button("Submit")
 
