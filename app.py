@@ -36,20 +36,23 @@ Now, create a summary based on the provided articles below:"""
 #
 #
 #
+
 st.title("EC21R&C SummaryGPT-v4")
 
 with st.form("form"):
+    secret_key = st.text_input(':secret: Secret Key')
     user_input = st.text_area("Prompt")
     model = st.selectbox("GPT Model", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
     temperature = st.selectbox("temperature", ["0.5", "0", "0.3", "0.7", "1"])
     submit = st.form_submit_button("Submit")
 
-if submit and user_input:
+if secret_key == 'movefast' and submit and user_input:
     with st.spinner("Waiting for ChatGPT..."):
         user_input = guide + '\n' + user_input
         prompt = generate_answer(user_input, models.get(model), float(temperature))
     st.write(prompt.replace('Title:', '').replace('(*)', '#').replace('>>', '##') )
-    
+else:
+    st.write('`Secret Key`를 입력하세요. **힌트**: `(와이파이 비밀번호)`:sunglasses:')
     
 # to-do
 # 사업별 섹션 나누기
