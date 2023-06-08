@@ -37,14 +37,23 @@ Now, create a summary based on the provided articles below:"""
 #
 #
 
-st.title("EC21R&C SummaryGPT-v4")
+st.title(":robot_face: EC21R&C SummaryGPT")
+
+placeholder = """[기사1 제목]
+[기사1 내용]
+[기사2 제목]
+[기사2 내용]
+...
+"""
 
 with st.form("form"):
-    secret_key = st.text_input(':secret: Secret Key')
-    user_input = st.text_area("Prompt")
-    model = st.selectbox("GPT Model", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
-    temperature = st.selectbox("temperature", ["0.5", "0", "0.3", "0.7", "1"])
-    submit = st.form_submit_button("Submit")
+    secret_key = st.text_input(':secret: **Secret Key**')
+    user_input = st.text_area("**Prompt (기사입력창)**", placeholder = placeholder, height = 500)
+    model = st.selectbox("**GPT Model 선택**", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
+    temperature = st.selectbox("**Temperature** (높을수록 자유롭게 문장을 생성) ", ["0.5", "0", "0.3", "0.7", "1"])
+    submit = st.form_submit_button(":printer: **요약문 생성** :printer:", use_container_width = True)
+
+
 
 if secret_key == 'movefast' and submit and user_input:
     with st.spinner("Waiting for ChatGPT..."):
