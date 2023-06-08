@@ -8,7 +8,7 @@ import os
 # openai.api_key = st.secrets["api_key"]
 # os.environ["api_key"] == st.secrets["api_key"]
 openai.organization = "org-cWYPb9h1vIjpstBy0y6td4Sj"
-openai.api_key = os.environ.get("api_key")
+openai.api_key = os.getenv('api_key')
 # os.environ[]
 
 def generate_answer(input_text, ft_model, temperature):
