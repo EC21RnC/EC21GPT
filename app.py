@@ -1,10 +1,12 @@
 import streamlit as st
 import openai
+import os
 
 # https://docs.streamlit.io/library/api-reference
 # streamlit run app.py
 
-openai.api_key = st.secrets["api_key"]
+# openai.api_key = st.secrets["api_key"]
+openai.api_key = os.environ["api_key"] == st.secrets["api_key"]
 
 def generate_answer(input_text, ft_model, temperature):
     # Code to access the GPT-3 API and generate a summary
