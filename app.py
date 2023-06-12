@@ -135,8 +135,3 @@ if secret_key == 'movefast' and submit_summary and user_input:
     st.write(prompt.replace('Title:', '').replace('(*)', '##').replace('>>', '###') )
 else:
     st.write('`Secret Key`를 입력하세요')
-    
-# to-do
-# 사업별 섹션 나누기
-# 토큰수 카운트 만들기
-# summarize 만들기
