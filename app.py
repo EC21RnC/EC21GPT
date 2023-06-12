@@ -11,6 +11,7 @@ from gensim.summarization import summarize
 # os.environ["api_key"] == st.secrets["api_key"]
 openai.organization = "org-cWYPb9h1vIjpstBy0y6td4Sj"
 openai.api_key = os.getenv('api_key')
+secret_key = os.getenv('secret_key')
 # os.environ[]
 # ------------------------------------------------------------------- # 
 # defs 
@@ -99,7 +100,7 @@ if submit and user_input:
 # ------------------------------------------------------------------- #
 with st.form("form_gpt"):
         # secret key
-    secret_key = st.text_input(':secret: **Secret Key**', placeholder = '힌트 : 와이파이 비밀번호')
+    secret_key_user = st.text_input(':secret: **Secret Key**', placeholder = '힌트 : 와이파이 비밀번호')
         # model selection
     model = st.selectbox("**GPT Model 선택**", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
         # temperature
@@ -108,7 +109,7 @@ with st.form("form_gpt"):
     submit_summary = st.form_submit_button(":printer: **요약문 생성** :printer:", use_container_width = True)
     # with st.form("form"):
 
-if secret_key == 'movefast' and submit_summary and user_input:
+if secret_key == secret_key_user and submit_summary and user_input:
     user_input = user_input.replace('\n\n', ' ').replace('\n', ' ').strip()
     if num_tokens_from_string(user_input) > 1200:
         with st.spinner("Summarizing Text..."):
