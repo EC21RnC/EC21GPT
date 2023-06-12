@@ -1,4 +1,4 @@
 openai
 streamlit
-gensim
+gensim==4.0.1
 tiktoken
