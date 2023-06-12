@@ -100,7 +100,7 @@ if submit and user_input:
 # ------------------------------------------------------------------- #
 with st.form("form_gpt"):
         # secret key
-    secret_key_user = st.text_input(':secret: **Secret Key**', placeholder = '힌트 : 와이파이 비밀번호')
+    secret_key_user = st.text_input(':secret: **Secret Key**', placeholder = 'chan@ec21rnc.com에 문의해주세요')
         # model selection
     model = st.selectbox("**GPT Model 선택**", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
         # temperature
