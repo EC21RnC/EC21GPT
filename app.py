@@ -4,6 +4,10 @@ import openai
 import os
 import tiktoken
 from gensim.summarization import summarize
+from googletrans import Translator
+import time
+from nltk.tokenize import sent_tokenize
+
 # https://docs.streamlit.io/library/api-reference
 # https://streamlit-emoji-shortcodes-streamlit-app-gwckff.streamlit.app/
 # streamlit run app.py
@@ -22,7 +26,6 @@ def num_tokens_from_string(string: str) -> int:
     encoding = tiktoken.encoding_for_model('curie')
     num_tokens = len(encoding.encode(string))
     return num_tokens
-
 
     # summarize
 def textRank_summarize(text, ratio):
@@ -43,8 +46,63 @@ def generate_answer(input_text, ft_model, temperature):
     )
     message = completions.choices[0].text
     return message
+
+def translate_text(text, source_language, target_language):
+    translator = Translator()
+    result = translator.translate(text, src=source_language, dest=target_language)
+    # print("Translation result:", result)
+    return result.text
+
+
+def translate_long_text(text):
+    sentences = sent_tokenize(text)
+
+    translated_text = ""
+    current_chunk = []
+    current_chunk_length = 0
+
+    for sentence in sentences:
+        sentence_length = len(sentence)
+
+        if current_chunk_length + sentence_length > 3000:
+            try:
+                try:
+                    translated_sentences = translate_text(" ".join(current_chunk), "en", "ko")
+                except:
+                    time.sleep(2)
+                    translated_sentences = translate_text(" ".join(current_chunk), "en", "ko")
+            except:
+                translated_sentences = ''
+            translated_text += "".join(translated_sentences)
+            current_chunk = [sentence]
+            current_chunk_length = sentence_length
+        else:
+            current_chunk.append(sentence)
+            current_chunk_length += sentence_length
+
+    if current_chunk:
+        # print("Translating chunk:", " ".join(current_chunk))
+        try:
+            try:
+                translated_sentences = translate_text(" ".join(current_chunk), "en", "ko")
+            except:
+                time.sleep(2)
+                translated_sentences = translate_text(" ".join(current_chunk), "en", "ko")
+        except:
+            translated_sentences = ''
+        translated_text += "".join(translated_sentences)
+        
+    return translated_text
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
+
+# Initialize the history in the session state
+if "history" not in st.session_state:
+    st.session_state["history"] = []
+# Create the history tab in the sidebar
+st.sidebar.markdown('# 	:speech_balloon: History')
+st.sidebar.caption(':warning: 페이지를 새로고침하면 히스토리가 사라집니다')
+st.sidebar.markdown('---')
 
 models = {
     '파인튜닝_curie_513' : 'curie:ft-ec21rnc-2023-05-31-09-57-57',
@@ -56,14 +114,13 @@ Now, create a summary based on the provided articles below:"""
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
     # Title
-st.title(":robot_face: :blue[EC21R&C] SummaryGPT")
+st.title(":blue[EC21R&C] SummaryGPT")
 st.divider()
 instructions = '''> 1. 기사입력창에 요약 대상 기사를 형식대로 붙혀 넣고, `토큰 수 계산` 버튼을 누른다.
 > 2. 1500자 이상일 경우, 보다 정확한 결과를 위해 주제와 필요없는 문장, 문단 등을 지우고 다시 토큰수를 계산한다.
 > 3. 문단을 지울 필요가 없다면, `Secret Key`, `GPT Model`, `Temperature`를 선택하고 `요약문 생성`을 클릭한다.
 
-:warning: 반드시 `토큰수 계산` 버튼을 누르고 `요약문 생성`을 클릭
-'''
+:warning: 반드시 `토큰수 계산` 버튼을 누르고 `요약문 생성`을 클릭'''
 st.subheader(':bulb: 사용법')
 st.markdown(instructions)
 st.divider()
@@ -89,12 +146,15 @@ if submit and user_input:
         token_num = num_tokens_from_string(user_input)
     st.subheader( '토큰수 : ' + str(token_num) + ' tokens' )
     st.caption('_1500 토큰을 넘어가면 기사가 자동으로 요약되어서 GPT에 입력됩니다_')
+else:
+    if submit and len(user_input) == 0:
+        st.warning('텍스트를 입력하세요')
 
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
 
 
-# with st.form("form_summarize"):
+
     
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
@@ -104,12 +164,18 @@ with st.form("form_gpt"):
         # model selection
     model = st.selectbox("**GPT Model 선택**", ["파인튜닝_curie_1837", "파인튜닝_curie_513"])
         # temperature
-    temperature = st.selectbox("**Temperature**", ["0.5", "0", "0.3", "0.7", "1"])    
+    temperature = st.selectbox("**Temperature**", ["0.5", "0", "0.3", "0.7", "1"])
     st.caption('→ _낮을수록 정형화된 답변 생성, 높을수록 자유롭게 문장을 생성_')
+        # translate_y_n
+    translate_y_n = st.selectbox("**답변을 한글로 번역**", ["No", "Yes"])
+    st.caption('→ _구글 번역기 사용 중. 추후 파인튜닝 모델로 변경 예정_')
+        # submit
     submit_summary = st.form_submit_button(":printer: **요약문 생성** :printer:", use_container_width = True)
+    
     # with st.form("form"):
+st.divider()
 
-if secret_key == secret_key_user and submit_summary and user_input:
+if submit_summary and secret_key == secret_key_user and user_input:
     user_input = user_input.replace('\n\n', ' ').replace('\n', ' ').strip()
     if num_tokens_from_string(user_input) > 1200:
         with st.spinner("Summarizing Text..."):
@@ -131,8 +197,40 @@ if secret_key == secret_key_user and submit_summary and user_input:
 
             user_input = summary
     with st.spinner("Waiting for ChatGPT..."):
-        user_input = guide + '\n' + user_input
+        # user_input = user_input
+        # user_input = guide + '\n' + user_input
         prompt = generate_answer(user_input, models.get(model), float(temperature))
-    st.write(prompt.replace('Title:', '').replace('(*)', '##').replace('>>', '###') )
+    if translate_y_n == 'No':
+        st.text(prompt)
+        # add to history
+        st.session_state["history"].append(prompt + '\n' + 'Temperature: ' +  str(temperature) + '\n' + 'Model: ' + str(model))
+    elif translate_y_n == 'Yes':
+        st.subheader('영문')
+        st.text(prompt)
+        st.divider()
+        st.subheader('한글')
+        st.text(translate_long_text(prompt).replace('.-', '.\n - ').replace('>>', '\n>>'))
+        st.divider()
+        # add to history
+        st.session_state["history"].append(prompt + '\n' + 'Temperature: ' +  str(temperature) + '\n' + 'Model: ' + str(model))
+    # st.sidebar
+    # st.sidebar.text_area("History", st.session_state["history"], height=200)
+
+    # st.write(prompt.replace('Title:', '').replace('(*)', '').replace('>>', '').replace('-', '') )
+    # st.write(prompt.replace('Title:', '')) #.replace('(*)', '##').replace('>>', '###') )
+    # st.write(prompt.replace('Title:', '').replace('(*)', '##').replace('>>', '###') )
+    # st.text(prompt.replace('Title:', '').replace('(*)', '##').replace('>>', '###') )
+
+elif len(user_input) == 0 and submit_summary:
+    st.warning('토큰 수 계산을 먼저 클릭하세요')
+elif len(user_input) != 0 and submit_summary and len(secret_key_user) != 0 and secret_key != secret_key_user:
+    st.warning('올바른 `Secret Key`를 입력하세요')
+elif len(user_input) != 0 and submit_summary and len(secret_key_user) == 0:
+    st.warning('`Secret Key`를 입력하세요')
 else:
-    st.write('`Secret Key`를 입력하세요')
+    pass
+
+# add to history
+for i, item in enumerate(st.session_state["history"]):
+    with st.sidebar.expander(f"Your Summary #{i+1}"):
+        st.text(item)
