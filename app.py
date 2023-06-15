@@ -7,6 +7,8 @@ from gensim.summarization import summarize
 from googletrans import Translator
 import time
 from nltk.tokenize import sent_tokenize
+import nltk
+nltk.download('punkt')
 
 # https://docs.streamlit.io/library/api-reference
 # https://streamlit-emoji-shortcodes-streamlit-app-gwckff.streamlit.app/
