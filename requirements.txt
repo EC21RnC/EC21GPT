@@ -2,5 +2,5 @@ openai
 streamlit
 gensim==3.8.3
 tiktoken
-googletrans
+googletrans==4.0.0rc1
 nltk
