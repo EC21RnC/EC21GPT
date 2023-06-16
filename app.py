@@ -115,16 +115,23 @@ guide = """Forget all the previous Intructions. As a professional journalist wit
 Now, create a summary based on the provided articles below:"""
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
+#
+#
+
+
+
+#
+#
+
     # Title
 st.title(":blue[EC21R&C] SummaryGPT")
 st.divider()
 instructions = '''> 1. 기사입력창에 요약 대상 기사를 형식대로 붙혀 넣고, `토큰 수 계산` 버튼을 누른다.
 > 2. 1500자 이상일 경우, 보다 정확한 결과를 위해 주제와 필요없는 문장, 문단 등을 지우고 다시 토큰수를 계산한다.
-> 3. 문단을 지울 필요가 없다면, `Secret Key`, `GPT Model`, `Temperature`를 선택하고 `요약문 생성`을 클릭한다.
-
-:warning: 반드시 `토큰수 계산` 버튼을 누르고 `요약문 생성`을 클릭'''
+> 3. 문단을 지울 필요가 없다면, `Secret Key`, `GPT Model`, `Temperature`를 선택하고 `요약문 생성`을 클릭한다.'''
 st.subheader(':bulb: 사용법')
 st.markdown(instructions)
+# st.info(instructions)
 st.divider()
     # pre-set
 # st.header('토큰 수 계산')
@@ -150,7 +157,7 @@ if submit and user_input:
     st.caption('_1500 토큰을 넘어가면 기사가 자동으로 요약되어서 GPT에 입력됩니다_')
 else:
     if submit and len(user_input) == 0:
-        st.warning('텍스트를 입력하세요')
+        st.error('텍스트를 입력하세요', icon="🚨")
 
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
@@ -202,16 +209,25 @@ if submit_summary and secret_key == secret_key_user and user_input:
         # user_input = user_input
         # user_input = guide + '\n' + user_input
         prompt = generate_answer(user_input, models.get(model), float(temperature))
+    # with st.container():
     if translate_y_n == 'No':
-        st.text(prompt)
+            # write text
+        st.markdown(prompt.replace('>>', '\n☐').replace('.-', '\n&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'))
+        st.code(prompt, language = 'markdown')
         # add to history
         st.session_state["history"].append(prompt + '\n' + 'Temperature: ' +  str(temperature) + '\n' + 'Model: ' + str(model))
     elif translate_y_n == 'Yes':
         st.subheader('영문')
-        st.text(prompt)
+            # en result
+        st.markdown(prompt.replace('>>', '\n☐').replace('.-', '\n&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'))
+        st.code(prompt, language = 'markdown')
         st.divider()
+            # ko result
         st.subheader('한글')
-        st.text(translate_long_text(prompt).replace('.-', '.\n - ').replace('>>', '\n>>'))
+        ts_text = translate_long_text(prompt)
+        ts_text = ts_text.replace('.-', '.\n - ').replace('>>', '\n>>')
+        st.markdown(ts_text.replace('>>', '\n☐').replace('.-', '\n&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'))
+        st.code(ts_text, language = 'markdown')
         st.divider()
         # add to history
         st.session_state["history"].append(prompt + '\n' + 'Temperature: ' +  str(temperature) + '\n' + 'Model: ' + str(model))
@@ -224,15 +240,15 @@ if submit_summary and secret_key == secret_key_user and user_input:
     # st.text(prompt.replace('Title:', '').replace('(*)', '##').replace('>>', '###') )
 
 elif len(user_input) == 0 and submit_summary:
-    st.warning('토큰 수 계산을 먼저 클릭하세요')
+    st.error('토큰 수 계산을 먼저 클릭하세요', icon="🚨")
 elif len(user_input) != 0 and submit_summary and len(secret_key_user) != 0 and secret_key != secret_key_user:
-    st.warning('올바른 `Secret Key`를 입력하세요')
+    st.error('올바른 `Secret Key`를 입력하세요', icon="🚨")
 elif len(user_input) != 0 and submit_summary and len(secret_key_user) == 0:
-    st.warning('`Secret Key`를 입력하세요')
+    st.error('`Secret Key`를 입력하세요', icon="🚨")
 else:
     pass
 
 # add to history
 for i, item in enumerate(st.session_state["history"]):
     with st.sidebar.expander(f"Your Summary #{i+1}"):
-        st.text(item)
+        st.code(item, language = 'markdown')
