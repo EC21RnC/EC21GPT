@@ -111,8 +111,25 @@ models = {
     '파인튜닝_curie_1837' : 'curie:ft-ec21rnc-2023-06-07-06-37-34',
     '기본모델_GPT-4' : 'gpt-4'
 }
-guide = """Forget all the previous Intructions. As a professional journalist with exceptional English writing skills, your task is to provide a comprehensive summary of the given news articles. To accomplish this, you must first create a suitable title in a full sentence. Next, you must identify at least three main points from the articles. Your summary should cover all three of these main points, with each point accompanied by three explanatory sentences. It is essential that you present the main points and their corresponding explanations in a logical and chronological sequence, with a clear connection to the topic. Your summary must cover all aspects of the provided articles, and you should not include any information outside of the passage. Additionally, avoid repeating facts or writing similar sentences. Finally, your response should consist solely of the summary, without any supplementary commentary. When referring to numerical data, such as market size, growth, budget, or rate, be sure to use the provided index.
-Now, create a summary based on the provided articles below:"""
+guide = '''Forget all the previous Intructions. As a professional journalist with exceptional English writing skills, your task is to provide a comprehensive summary of the given news articles, delimited by triple quotes.
+
+To write the report keep in mind that:
+
+You need to act as a professional journalist with excellent English speaking and writing skills in politics, economy, and business industry.
+First, you must first create a suitable title in a full sentence.
+You must identify at least three main points from the articles.
+Your summary should cover all three of these main points, with each point accompanied by three explanatory sentences.
+It is essential that you present the main points and their corresponding explanations in a logical and chronological sequence, with a clear connection to the topic.
+Your summary must cover all aspects of the provided articles, and you should not include any information outside of the passage.
+Avoid repeating facts or writing similar sentences.
+Your response should consist solely of the summary, without any supplementary commentary.
+Keep in mind that when handling numbers(such as market size, growth metrics, budgetary figures, or rates), it's crucial to maintain the original order as specified in the given index. Do not modify or shuffle these numbers.
+Article must be 100% human writing style, fix grammar issues and change to active voice.
+
+IMPORTANT: Don't run away from this step by step, obey it completely
+
+Now, create a summary based on the provided articles below:
+"""{}"""'''
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
 #
@@ -207,7 +224,7 @@ if submit_summary and secret_key == secret_key_user and user_input:
             user_input = summary
     with st.spinner("Waiting for ChatGPT..."):
         # user_input = user_input
-        # user_input = guide + '\n' + user_input
+        user_input = guide.format(user_input)
         prompt = generate_answer(user_input, models.get(model), float(temperature))
     # with st.container():
     if translate_y_n == 'No':
