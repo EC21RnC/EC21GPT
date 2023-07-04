@@ -125,6 +125,16 @@ Avoid repeating facts or writing similar sentences.
 Your response should consist solely of the summary, without any supplementary commentary.
 Keep in mind that when handling numbers(such as market size, growth metrics, budgetary figures, or rates), it's crucial to maintain the original order as specified in the given index. Do not modify or shuffle these numbers.
 Article must be 100% human writing style, fix grammar issues and change to active voice.
+When summarizing, Current issues, Context, Background information and Additional explanations should be clearly and logically composed.
+Avoid writing two similar sentences consecutively (a typical translation style); instead, combine them into one sentence.
+For quotes from individuals, don't include content with no informational value (diplomatic rhetoric, obvious remarks, etc.).
+Indication of a person's affiliation/status => Indicate affiliation and position after the name
+Month and day indication => Bad example: The past 2nd day (exact month and day unknown). Of course, once you write the month and day, it's okay to omit the month in the same paragraph.
+numerical notation => Indicate in Korean won e.g. 100달러(한화 12만 원)
+Unit notation => Be sure to check for missing currency and numerical units.
+Confirmation of position => Check if the title and name of the person are correct.
+Indication of date in the first paragraph: Month and day => e.g. 1월 1일(0). 2020년 1월 1일(X) - Remove the year. Last January 1 (X) - Remove the word "last". January 1, (X) - Remove the comma
+Quarter notation => e.g. 1/4 quarter (O) e.g. 1 quarter (X) e.g. 1 quarter (X)
 
 IMPORTANT: Don't run away from this step by step, obey it completely
 
