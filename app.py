@@ -328,7 +328,8 @@ if submit_summary and secret_key == secret_key_user and user_input:
         st.divider()
             # ko result
         st.subheader('한글')
-        ts_text = gpt_translate(prompt)
+        with st.spinner("Waiting for ChatGPT..."):
+            ts_text = gpt_translate(prompt)
         # ts_text = translate_long_text(prompt)
         ts_text = ts_text.replace('.-', '.\n - ').replace('>>', '\n>>')
         st.markdown(ts_text.replace('>>', '\n☐').replace('.-', '\n&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'))
