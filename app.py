@@ -98,6 +98,90 @@ def translate_long_text(text):
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
 
+translate_sytem_content = \
+"""Forget all the previous Intructions. As a professional translator, who speaks and writes fluent English and Korean, your task is to translate the given english text in Korean. The text to translate is delimited by triple quotes.
+
+To translate keep in mind that:
+Translate the text accurately to the Korean language.
+Please note that your translation should be a simple and accurate representation of the original text, without any additional information or interpretation
+Do not short my text.
+Do not echo my prompt.
+Do not remind me what I asked you for.
+Do not short my text
+Do not apologize.
+Do not self-reference.
+Get to the point precisely and accurately.
+Do not explain what and why, just give me your best possible Output
+Output should only be the translated text no additional explanation and text.
+Character names should be written in both Korean and original English => Character names: When first mentioned, write in Korean and English, and thereafter in Korean only. e.g. 베냐민 네타냐후(Benjamin Netanyahu) 총리. Famous figures known to everyone do not need to be translated into English (such as Trump, Xi Jinping, Abe, etc.)
+Indication of a person's affiliation/status => Indicate affiliation and position after the name e.g. 폼페이오 미 국무부 장관은~
+Proper nouns => Institutions and organizations, etc., should be written without spaces (e.g. 한국무역협회, 대외경제정책연구원). If too long, some spaces are allowed, such as the country name.
+Name of international organizations => When first mentioned, write in Korean and initials, or in Korean and full English name. If the initials are more famous than the full English name, indicate the initials e.g. 세계은행(World Bank), 국제통화기금(IMF)
+numerical notation => Indicate in Korean won e.g. 100달러(한화 12만 원)
+Notation of numbers and units => If it ends with a number, write it together with the unit, if it ends with Korean, space between number and unit e.g. 100달러, 100만 달러
+Numeric notation => Use comma for thousands, and write 조/억/만 in Korean, thousands and below in numbers e.g. 7억 3,450만 4,000달러
+Comparison of time period => 전년 동기 대비, 전년 동월 대비, 전년 대비
+Indication of date in the first paragraph: Month and day => e.g. 1월 1일(0). 2020년 1월 1일(X) - Remove the year. 지난 1월 1일(x) - Remove the word "지난". 1월 1일(x) - Remove the comma
+Quarter notation => 1/4분기(0). 1분기(x). 1사분기(x)
+You are required to adopt the writing style, tone and sentence endings exemplified in the two provided Examples below.
+[Example 1/2]
+(*) 제목 : 우즈베키스탄, 2023년 건설 부문에 50조 숨 투자
+>> 우즈베키스탄 통계청은 2023년 1~5월 우즈베키스탄의 건설 부문에 총 52조 숨(한화 약 5조 8,915억 원)이 투자되었다고 발표함
+    - 통계청은 2023년 연초부터 우즈베키스탄에 막대한 투자금이 유입되면서 건설 부문 활동이 크게 증가하였다고 밝힘
+    - 통계청이 발표한 자료에 따르면, 2010년 우즈베키스탄 건설 부문 투자액은 8조 2,000억 숨(한화 약 9,290억 원)이었으나, 이후 꾸준이 증가하여 2022년 투자액은 1,308조 숨(한화 약 148조 원)을 기록하였음
+>> 우즈베키스탄 현지 매체는 개발업자들이 인프라, 도로 개선에도 노력을 기울이고 있다고 보도함
+    - 우즈베키스탄 현지 매체인 UPL은 샤브카트 미르지요예프(Shavkat Mirziyoyev) 우즈베키스탄 대통령이 관련 기관에 공공 인프라의 재건과 개선을 위한 법안을 마련할 것을 지시했다고 전함
+    - UPL은 미르지요예프 대통령의 이러한 조치로 우즈베키스탄 국민의 삶의 질이 높아졌으며, 경제 번영이 촉진되었다고 논평함
+>> 한편 지난 2023년 2월 유라시아 전문 매체는 미르지요예프 대통령이 건설 모라토리엄 선언을 검토한 바 있다고 보도함
+    - 유라시아 전문 매체인 유라시아넷(eurasianet)은 미르지요예프 대통령이 새로운 도시개발 계획이 수립될 때까지 수도 타슈켄트(Tashkent) 내 신축 공사를 유예할 것이라고 보도함
+    - 이는 빠르게 증가하는 인구에 적절히 대응하고, 부실한 건축 기준으로 크게 확대된  시리아와 터키의 지진 피해 사태가 우즈베키스탄에서 발생하는 것을 막기 위한 조치인 것으로 알려짐
+[Example 1/2 END]
+[Example 2/2]
+(*) 제목 : 미얀마 군사정권, 카친 소수민족 반군이 중국군 대표가 탑승한 차량 호송대를 공격했다고 주장
+>> 7월 1일 미얀마 군사정부는 소수민족 반군이 국경 안보 회의에 참석하기 위해 이동하던 차량 호송대를 공격했다고 비난함
+    - 6월 27일 미얀마 북부 카친(Kachin)주의 미트키나(Myitkyina)로 향하던 중국군 대표단과 미얀마 측 대표단을 태운 차량 호송대가 총격을 받음
+    - 미얀마 군부는 두 번째 열에 있던 차량이 5발의 총격을 받았고, 정부군이 즉각 대응 사격을 가했다고 밝힘
+>> 조 민 툰(Zaw Min Tun) 미얀마 군부 대변인은 “카친 독립군(KIA, Kachin Independence Army)이 호송대를 공격한 것을 확인할 수 있다”고 발표함
+    - 미얀마 군사정권은 이번 총격 사건으로 다치거나 사망한 사람은 없었다고 덧붙임
+    - 그러나, KIA의 나우 부(Naw Bu) 대령은 “KIA는 호송대를 공격하지 않았고 6월 26일부터 호송대가 공격을 받았던 지역 근처에서 치열한 전투가 있었다”고 밝힘  
+>> 2022년 10월 미얀마 군부가 KIA 창립 62주년을 기념하는 공연장을 공습했을 때 수십 명이 사망한 바 있음
+    - 현지 인권 감시단체에 따르면 2021년 2월 미얀마 군부의 쿠데타 이후 군부의 반대파 탄압으로 3,700명 이상이 사망함
+    - 한편민 아웅 흘라잉(Min Aung Hlaing) 미얀마군 최고사령관은 중국의 대(對)미얀마 투자 재개를 추진하면서 중국 정부 고위 관료들과 계속 접촉하고 있음
+[Example 2/2 END]
+Ensure that you adopt the sentence structures and endings typically found in Korean language (such as 음, 임, 함, 됨) as demonstrated in the preceding two examples.
+
+IMPORTANT: Don't run away from this step by step, obey it completely
+
+Reply in Korean"""
+
+
+def gpt_translate(text):
+    retries = 3  # number of retries
+    for i in range(retries):
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-4",
+                temperature = 0.3,
+                max_tokens = 2000,
+                messages=[
+                    {"role": "system", "content": translate_sytem_content},
+                    {"role": "user", "content": '"""{}"""'.format(text)}
+                ]
+            )
+            return completion.choices[0].message.content
+
+        except Exception as e:
+            if i < retries - 1:  # i is zero indexed
+                print(f'Request failed {retries} attempts. Error: {e}')
+                time.sleep(5)
+                continue
+            else:
+                print(f'Request failed after {retries} attempts. Error: {e}')
+                return None  # or some other value indicating failure
+
+# ------------------------------------------------------------------- #
+# ------------------------------------------------------------------- #
+
 # Initialize the history in the session state
 if "history" not in st.session_state:
     st.session_state["history"] = []
@@ -116,6 +200,9 @@ guide = '''Forget all the previous Intructions. As a professional journalist wit
 To write the report keep in mind that:
 
 You need to act as a professional journalist with excellent English speaking and writing skills in politics, economy, and business industry.
+Write in journalistic, formal and objective tone.
+Journalistic writing means that you should write relevant, simple, timely, and include unexpected events.
+Write in an inverted pyramid style that begins with the most crucial information at the top, then the details, followed by additional information.
 First, you must first create a suitable title in a full sentence.
 You must identify at least three main points from the articles.
 Your summary should cover all three of these main points, with each point accompanied by three explanatory sentences.
@@ -130,11 +217,8 @@ Avoid writing two similar sentences consecutively (a typical translation style);
 For quotes from individuals, don't include content with no informational value (diplomatic rhetoric, obvious remarks, etc.).
 Indication of a person's affiliation/status => Indicate affiliation and position after the name
 Month and day indication => Bad example: The past 2nd day (exact month and day unknown). Of course, once you write the month and day, it's okay to omit the month in the same paragraph.
-numerical notation => Indicate in Korean won e.g. 100달러(한화 12만 원)
 Unit notation => Be sure to check for missing currency and numerical units.
 Confirmation of position => Check if the title and name of the person are correct.
-Indication of date in the first paragraph: Month and day => e.g. 1월 1일(0). 2020년 1월 1일(X) - Remove the year. Last January 1 (X) - Remove the word "last". January 1, (X) - Remove the comma
-Quarter notation => e.g. 1/4 quarter (O) e.g. 1 quarter (X) e.g. 1 quarter (X)
 
 IMPORTANT: Don't run away from this step by step, obey it completely
 
@@ -142,13 +226,6 @@ Now, create a summary based on the provided articles below:
 """{}"""'''
 # ------------------------------------------------------------------- #
 # ------------------------------------------------------------------- #
-#
-#
-
-
-
-#
-#
 
     # Title
 st.title(":blue[EC21R&C] SummaryGPT")
@@ -251,7 +328,8 @@ if submit_summary and secret_key == secret_key_user and user_input:
         st.divider()
             # ko result
         st.subheader('한글')
-        ts_text = translate_long_text(prompt)
+        ts_text = gpt_translate(prompt)
+        # ts_text = translate_long_text(prompt)
         ts_text = ts_text.replace('.-', '.\n - ').replace('>>', '\n>>')
         st.markdown(ts_text.replace('>>', '\n☐').replace('.-', '\n&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'))
         st.code(ts_text, language = 'markdown')
