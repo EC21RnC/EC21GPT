@@ -195,13 +195,12 @@ models = {
     '파인튜닝_curie_1837' : 'curie:ft-ec21rnc-2023-06-07-06-37-34',
     '기본모델_GPT-4' : 'gpt-4'
 }
-guide = '''Forget all the previous Intructions. As a professional journalist with exceptional English writing skills, your task is to provide a comprehensive summary of the given news articles, delimited by triple quotes.
+guide = '''Forget all the previous Intructions. Your task is to provide a comprehensive summary of the given news articles, delimited by triple quotes.
 
 To write the report keep in mind that:
 
 You need to act as a professional journalist with excellent English speaking and writing skills in politics, economy, and business industry.
-Write in journalistic, formal and objective tone.
-Journalistic writing means that you should write relevant, simple, timely, and include unexpected events.
+Write in journalistic, formal and objective tone. Journalistic writing means that you should write relevant, simple, timely, and include unexpected events.
 Write in an inverted pyramid style that begins with the most crucial information at the top, then the details, followed by additional information.
 First, you must first create a suitable title in a full sentence.
 You must identify at least three main points from the articles.
@@ -290,9 +289,9 @@ st.divider()
 
 if submit_summary and secret_key == secret_key_user and user_input:
     user_input = user_input.replace('\n\n', ' ').replace('\n', ' ').strip()
-    if num_tokens_from_string(user_input) > 1200:
+    if num_tokens_from_string(user_input) > 1000:
         with st.spinner("Summarizing Text..."):
-            target_token_num = 1200
+            target_token_num = 1000
             ratio = target_token_num / num_tokens_from_string(user_input)
             ratio = round(ratio, ndigits=1)
 
