@@ -16,8 +16,8 @@ nltk.download('punkt')
 # openai.api_key = st.secrets["api_key"]
 # os.environ["api_key"] == st.secrets["api_key"]
 openai.organization = "org-cWYPb9h1vIjpstBy0y6td4Sj"
-openai.api_key = os.getenv('api_key')
-secret_key = os.getenv('secret_key')
+openai.api_key = os.environ('api_key')
+secret_key = os.environ('secret_key')
 # os.environ[]
 # ------------------------------------------------------------------- # 
 # defs 
